@@ -2,19 +2,35 @@
 int mic = 40;
 
 // Variables to find the peak-to-peak amplitude of AUD output
-const int sampleTime = 5; 
+const int sampleTime = 10; 
 int micOut;
 
 //previous VU value
 int preValue = 0; 
 
+#include <SoftwareSerial.h>
+SoftwareSerial BTserial(8,7); // RX | TX
+// Connect the HC-05 TX to Arduino pin 8 RX. 
+// Connect the HC-05 RX to Arduino pin 7 TX through a voltage divider.
+
+char c = ' ';
+
 void setup() {
   Serial.begin(9600);
+  // HC-05 default serial speed for AT mode is 38400
+  BTserial.begin(38400);    
 }
 
 void loop() {
    int micOutput = findPTPAmp();
-   VUMeter(micOutput);   
+   VUMeter(micOutput);
+
+    // Keep reading from Arduino Serial Monitor and send to HC-05
+    if (Serial.available())
+    {
+//        c =  Serial.read();
+        BTserial.write(micOutput);
+    }
 }   
 
 
